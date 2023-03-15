@@ -5,7 +5,7 @@ Created on Sun Mar  5 12:03:17 2023
 @author: river
 """
 import matplotlib.pyplot as plt
-from utils.online_train import online_simulate_2
+from utils.online_train import online_simulate
 from utils.plot import plot_error_bands
 import scienceplots
 
@@ -15,9 +15,9 @@ title = ['$g(x) = x$', '$g(x) = x^2$', '$g(x) = e^x$','$g(x) = sinx$'] # title o
 
 
 for typ,title in zip(typ,title):
-    result_1 = online_simulate_2(N=1, T=T, data_type=typ)
-    result_10 = online_simulate_2(N=10, T=T, data_type=typ)
-    result_20 = online_simulate_2(N=20, T=T, data_type=typ)
+    result_1 = online_simulate(N=1, T=T, data_type=typ)
+    result_10 = online_simulate(N=10, T=T, data_type=typ)
+    result_20 = online_simulate(N=20, T=T, data_type=typ)
     plt.style.use(['science','no-latex','grid'])
     plt.figure(figsize=(7.5, 5.625), dpi=200)
     plot_error_bands(result_1['linear'], label='linear 1')
@@ -27,7 +27,7 @@ for typ,title in zip(typ,title):
     plot_error_bands(result_10['net'], label='net 10')
     plot_error_bands(result_20['net'],label='net 20')
     plt.title(title)
-    plt.xlabel('time $t$')
+    plt.xlabel('log(time) $t$')
     plt.ylabel('log(regret)')
     plt.legend()
     plt.savefig('picture/{}.png'.format(typ)) 

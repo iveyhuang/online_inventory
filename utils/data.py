@@ -70,6 +70,7 @@ class DataGen:
         g_x_exp = np.exp(omega_x)
         g_x_sin = np.sin(omega_x)
         
+        # adjust the mean and std equal to the g_x_linear
         g_x_polynomial *= g_x_linear.std()/g_x_polynomial.std()
         g_x_exp *= g_x_linear.std()/g_x_exp.std()
         g_x_sin *= g_x_linear.std()/g_x_sin.std()
@@ -96,11 +97,32 @@ class DataGen:
         D = g_x + delta
         optimal_y = g_x + NormalDist(mu=delta_mean, sigma=delta_std).inv_cdf(h/(b+h))
         
+        '''
+        if N<N_all, we set x[:,:,N:] = 0
+        for example:
+            N = 1, N_all = 20,
+            x = [1, 0, 0...0]
+        '''
         if N < N_all:
             x[:,:,N:] = 0
+            
         return {'demand':D, 'optimal_y':optimal_y, 'x':x}
     
     def load_data(self, data_type='linear'):
+        '''
+        
+
+        Parameters
+        ----------
+        data_type : TYPE, optional
+            type of the data. The default is 'linear'.
+
+        Returns
+        -------
+        dataset : pytorch dataset
+            (x, D).
+
+        '''
         data_dict = self.prepare_data(data_type=data_type)
         dataset = []
         for i in range(self.num_sample):

@@ -17,6 +17,28 @@ import torch.nn as nn
 import torch.optim as optim
 
 def train(model, optimizer, data_loader, loss_func=cost, lr_schedule=None):
+    '''
+    
+
+    Parameters
+    ----------
+    model : custumed model
+          class ModelComier.
+    optimizer : torch.optim
+        eg. Adam or SGD.
+    data_loader : pytorch data_loader
+        data_loader will return (x, D).
+    loss_func : pytho function, optional
+        loss function. The default is cost.
+    lr_schedule : TYPE, optional
+        learning rate schedule. The default is None.
+
+    Returns
+    -------
+    result : TYPE
+        DESCRIPTION.
+
+    '''
     Y = []
     Regret = []
     Mean = []
@@ -52,50 +74,36 @@ def train(model, optimizer, data_loader, loss_func=cost, lr_schedule=None):
         result['regret'] = Regret
         result['regret_mean'] = Mean
     return result
-
-
-
-
-def model_train(model, optimizer, dataset, lr_schedule=None, loss_func=cost, perishable=False, cpu=0):
-    model = ModelCompiler(model, loss_func=loss_func, perishable=perishable)
-    model.train()
-    if cpu == 0:
-        result = np.array([train(model, optimizer,  DataLoader(dataset[i]))['regret_mean'] for i in tqdm(range(len(dataset)))])
-    else:
-        def func(index):
-            return train(model, optimizer,  DataLoader(dataset[index]))['regret_mean']
-        result = np.array(Parallel(n_jobs=cpu)(delayed(func)(index) for index in tqdm(range(len(dataset)))))  
-    return result
-    
-def online_simulate(N, data_type, T=2000, num_sample=200, lr_schedule=None, cpu=-1):
-    data = DataGen(N=N, T=T, num_sample=num_sample)
-    dataset = data.load_data(data_type=data_type)
-    
-    model_linear = nn.Linear(in_features=N, out_features=1)
-    model_net = nn.Sequential(
-        nn.Linear(in_features=N, out_features=10),
-        nn.ReLU(),
-        nn.Linear(in_features=10, out_features=1)       
-        )
-    
-    optimizer_linear = optim.SGD(model_linear.parameters(), lr=1e-2)
-    optimizer_net = optim.SGD(model_net.parameters(), lr=1e-2)
-    
-    result_linear = model_train(model=model_linear, 
-                                optimizer=optimizer_linear, 
-                                dataset=dataset,
-                                lr_schedule=lr_schedule,
-                                cpu=cpu)
-    
-    result_net = model_train(model=model_net, 
-                             optimizer=optimizer_net, 
-                             dataset=dataset,
-                             lr_schedule=lr_schedule,
-                             cpu=cpu)
-    
-    return {'linear': result_linear, 'net': result_net}
        
-def online_simulate_2(N, data_type, N_all=20, T=2000, num_sample=200, lr_schedule=None, cpu=-1):
+def online_simulate(N, data_type, N_all=20, T=2000, num_sample=200, lr_schedule=None, cpu=-1):
+    '''
+    
+
+    Parameters
+    ----------
+    N : int
+        the number of feature available.
+    data_type : str
+        type of the data.
+    N_all : int, optional
+        total number of the features. The default is 20.
+    T : int, optional
+        time peirod. The default is 2000.
+    num_sample : int, optional
+        number of the sample. The default is 200.
+    lr_schedule : pytorch learning rate schedule, optional
+        learning rate schedule. The default is None.
+    cpu : int, optional
+        if cpu = -1, use all threads
+        if cpu = -2, use all threads except one
+        if cpu = 0, use one threads. The default is -1.
+
+    Returns
+    -------
+    TYPE
+        DESCRIPTION.
+
+    '''
     data = DataGen(N=N, T=T, num_sample=num_sample)
     dataset = data.load_data(data_type=data_type)
     
@@ -121,7 +129,9 @@ def online_simulate_2(N, data_type, N_all=20, T=2000, num_sample=200, lr_schedul
             result_net.append(train(model_net, optimizer_net,  DataLoader(dataset[i]))['regret_mean'])
     else:
         def func_linear(i):
-            model_linear = ModelCompiler(nn.Linear(in_features=N_all, out_features=1))            
+            linear = nn.Linear(in_features=N_all, out_features=1)
+            # nn.init.uniform_(linear.weight.data,1,10)
+            model_linear = ModelCompiler(linear)            
             model_linear.train()    
             optimizer_linear = optim.SGD(model_linear.parameters(), lr=1e-2)
             return train(model_linear, optimizer_linear, DataLoader(dataset[i]))['regret_mean']
