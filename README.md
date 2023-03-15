@@ -2,7 +2,7 @@
 This project is a simulation program for an online inventory management model
 
 ## Intsall Required Package with conda
-1. To switch to the path of the file, you can use the `cd` command in the terminal. For example, if the download path of the file is `~/desktop/Online_Inventory`, you can run the command `cd ~/desktop/Online_Inventory` in the terminal to switch to that directory.
+1. To switch to the path of the file, you can use the `cd` command in the terminal. For example, if the download path of the file is `~/desktop/online_inventory`, you can run the command `cd ~/desktop/online_inventory` in the terminal to switch to that directory.
 
 2. If you’re using a PC, you can create a virtual environment named `env_online` and install the required dependencies using the command `conda create –name env_online –file requirements.txt`. However, if you’re using a Mac with an M1 processor, you’ll need to run the command `conda create –name env_online –file requirements_m1_mac.txt` instead.
 
