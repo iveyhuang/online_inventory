@@ -13,4 +13,4 @@ This project is a simulation program for an online inventory management model
 5. If you don’t have Conda installed on your computer, you can refer to the instructions on how to [intsall Miniforge](https://equatorial-marlin-edd.notion.site/Install-Miniforge-on-Mac-of-M-chips-Windows-ec7d87d8c6494cca83681c5cbf9a3ac4).
 
 ## Use Google Colab
-1. If you prefer not to download and install any development environment on your computer, there is an alternative option available. You can access the [main.ipynb](./colab/main.ipynb) file, which will allow you to view and edit the file without the need for additional software. 
+1. If you prefer not to download and install any development environment on your computer, there is an alternative option available. You can access the [main.ipynb](./colab/main.ipynb) file, which will allow you to view and edit the file without the need for additional package. 
