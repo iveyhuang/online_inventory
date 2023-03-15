@@ -6,7 +6,6 @@ Created on Sun Mar  5 10:57:50 2023
 """
 import numpy as np
 from tqdm import tqdm
-from sklearn.preprocessing import minmax_scale
 from statistics import NormalDist
 from torch.utils.data import Dataset
 import torch
