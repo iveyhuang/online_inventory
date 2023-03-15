@@ -11,3 +11,6 @@ This project is a simulation program for an online inventory management model
 4. Finally, you can run the `main.py` file using the command `python main.py` while the virtual environment is activated.
 
 5. If you don’t have Conda installed on your computer, you can refer to the instructions on how to [intsall Miniforge](https://equatorial-marlin-edd.notion.site/Install-Miniforge-on-Mac-of-M-chips-Windows-ec7d87d8c6494cca83681c5cbf9a3ac4).
+
+## Use Google Colab
+1. If you do not want to install environment in your computer, you can find [main.ipynb](./colab/main.ipynb)
