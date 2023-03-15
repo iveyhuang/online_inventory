@@ -29,7 +29,7 @@ def log(x:np.array):
     x[x==0] = 0
     return x
     
-def plot_error_bands(y:np.array, label:str, num_std:float = 2):
+def plot_error_bands(y:np.array, label:str, num_std:float = 0.25):
     '''
     
 
