@@ -48,6 +48,6 @@ def plot_error_bands(y:np.array, label:str, num_std:float = 0.25):
     y = log(y)
     mean = y.mean(axis=0)
     std = y.std(axis=0)
-    x = np.arange(len(mean))
+    x = np.log(np.arange(len(mean)))
     plt.plot(x, mean, label=label)
     plt.fill_between(x, mean-num_std*std, mean+num_std*std, alpha=0.2)
