@@ -10,7 +10,7 @@ import numpy as np
 from tqdm import tqdm
 from utils.loss import cost
 from utils.data import DataGen
-from models.model import ModelCompiler
+from models.model import ModelCompiler, FAI
 from torch.utils.data import DataLoader
 from joblib import Parallel, delayed
 import torch.nn as nn
@@ -75,7 +75,7 @@ def train(model, optimizer, data_loader, loss_func=cost, lr_schedule=None):
         result['regret_mean'] = Mean
     return result
        
-def online_simulate(N, data_type, N_all=20, T=2000, num_sample=200, lr_schedule=None, cpu=-1):
+def auto_simulate(N, data_type, N_all=20, T=2000, num_sample=200, lr_schedule=None, cpu=-1):
     '''
     
 
@@ -154,8 +154,45 @@ def online_simulate(N, data_type, N_all=20, T=2000, num_sample=200, lr_schedule=
     return {'linear': result_linear, 'net': result_net}      
         
         
-        
-        
+def manual_simluate(N, data_type, N_all=20, T=720, num_sample=200, cpu=-1):
+    '''
+    
+
+    Parameters
+    ----------
+    N : int
+        feature available.
+    data_type : str
+        type of the data.
+    N_all : int, optional
+        total features. The default is 20.
+    T : int, optional
+        T period. The default is 720.
+    num_sample : int, optional
+        sample of the data. The default is 200.
+    cpu : int, optional
+        if cpu = -1, use all threads
+        if cpu = -2, use all threads except one
+        if cpu = 0, use one threads. The default is -1.
+
+    Returns
+    -------
+    np.array
+        regret shape: (num_sample, T).
+
+    '''
+    data = DataGen(N=N, T=T, N_all=N_all,num_sample=num_sample)
+    data = data.prepare_data(data_type=data_type)
+
+    def func(index):
+        x, demand = data['x'][index], data['demand'][index]
+        y = np.array([y for y in FAI(x, demand)])
+        regret = cost(y, demand).numpy() # calculate the regret
+        regret_mean = np.cumsum(regret)/(np.arange(regret.shape[0]) + 1) # calculate the mean regret before t
+        return regret_mean
+
+    result = Parallel(n_jobs=-1)(delayed(func)(index) for index in tqdm(range(200)))
+    return np.array(result)
         
         
         

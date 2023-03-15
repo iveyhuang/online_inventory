@@ -6,8 +6,9 @@ Created on Thu Mar  9 23:26:02 2023
 """
 import torch
 import torch.nn.functional as F
+import numpy as np
 
-def cost(y:torch.tensor, demand:torch.tensor, h=1, b=3):
+def cost(y, demand, h=1, b=3):
     '''
     
 
@@ -28,6 +29,8 @@ def cost(y:torch.tensor, demand:torch.tensor, h=1, b=3):
         cost of this period.
 
     '''
+    if isinstance(y, np.ndarray) or isinstance(demand,np.ndarray):
+        y = torch.tensor(y)
+        demand = torch.tensor(demand)
     cost = h*F.relu(y-demand) + b*F.relu(demand-y) # shape (1, 1)
     return cost
-
