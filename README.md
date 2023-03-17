@@ -16,3 +16,4 @@ This project is a simulation program for an online inventory management model
 1. If you prefer not to download and install any development environment on your computer, there is an alternative option available. You can access the [main.ipynb](./colab/main.ipynb) file, which will allow you to view and edit the file without the need for additional package. 
 2. To run the program, please click on the `Open In Colab` button. This will enable you to access and execute the code.
 <img width="1087" alt="image" src="https://user-images.githubusercontent.com/114122443/225371274-0b043ca0-7170-4b42-b011-393b7d2386b4.png">
+3. Due to the small size of the model, utilizing a GPU will result in slower processing compared to using only a CPU. However, it should be noted that Colab's CPU performance is relatively low, resulting in slow program execution.
