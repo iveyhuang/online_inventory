@@ -8,6 +8,7 @@ import numpy as np
 from tqdm import tqdm
 from statistics import NormalDist
 from torch.utils.data import Dataset
+from scipy.stats import truncnorm
 import torch
 
 initial_pram = {
@@ -16,8 +17,17 @@ initial_pram = {
     'x_low':1,
     'x_high':2,
     'omega_low':1,
-    'omega_high':10
+    'omega_high':10,
+    'loc': 0, # mean of the delta
+    'scale': 40, # std of the delta
+    'delta_low': -120, # -3*std
+    'delta_high':120 # 3*std
     }
+
+
+
+#%%
+
 
 class DataGen:
     def __init__(self, N:int, T:int, num_sample:int, N_all:int=20):
@@ -56,7 +66,7 @@ class DataGen:
         '''
         
         print('-----Begin Simulation-----')
-        b,h,x_low,x_high,omega_low,omega_high=prams.values()
+        b,h,x_low,x_high,omega_low,omega_high,loc,scale, delta_low, delta_high = prams.values()
         N, N_all, T, num_sample = self.N, self.N_all,self.T, self.num_sample
         
         
@@ -79,8 +89,9 @@ class DataGen:
         g_x_polynomial += g_x_linear.mean() - g_x_polynomial.mean()
         g_x_sin += g_x_linear.mean() - g_x_sin.mean()
         
-        delta_mean, delta_std = g_x_linear.mean(), g_x_linear.std()
-        delta = np.random.normal(loc=delta_mean, scale=delta_std, size=(num_sample, T, 1)) # shape (num_sample, T, 1)
+        a, b = (delta_low - loc) / scale, (delta_high - loc) / scale
+        delta = truncnorm.rvs(a, b, loc, scale, size=(num_sample, T, 1))
+        theta = truncnorm.pdf(delta, a, b, loc, scale).min()
         
         if data_type == 'linear':
             g_x = g_x_linear
@@ -93,9 +104,9 @@ class DataGen:
         else:
             raise ValueError("data type must be linear, polynomial, trigonometic and exponential!")
         print('\n-----End Simulation-----\n')
-        g_x += 3*delta_std
+        g_x += scale
         D = g_x + delta
-        optimal_y = g_x + NormalDist(mu=delta_mean, sigma=delta_std).inv_cdf(h/(b+h))
+        optimal_y = g_x + truncnorm.ppf(b/(b+h), a, b, loc, scale)
         
         '''
         if N<N_all, we set x[:,:,N:] = 0
@@ -106,7 +117,7 @@ class DataGen:
         if N < N_all:
             x[:,:,N:] = 0
             
-        return {'demand':D, 'optimal_y':optimal_y, 'x':x}
+        return {'demand':D, 'optimal_y':optimal_y, 'x':x, 'theta': theta}
     
     def load_data(self, data_type='linear'):
         '''
@@ -194,9 +205,3 @@ def cost(stretagy, demand, h=1, b=3, return_bios = False):
         return {'bios':bios, 'cost':bios.mean(axis=1)}
     else:
         return bios.mean(axis=1)
-
-
-    
-
-
-    

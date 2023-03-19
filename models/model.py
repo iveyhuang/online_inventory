@@ -76,10 +76,11 @@ class FAI:
     def __init__(self, 
                  x:np.array, 
                  demand:np.array,
+                 theta:float,
                  perishable=False,
                  h=1,b=3,
-                 theta = 1,
-                 omega=[0,1]):
+                 z_range=[0, 10],
+                 omega=[1,10]):
         '''
         
 
@@ -107,7 +108,8 @@ class FAI:
         '''
         
         T,N = x.shape
-        omega_low, omega_high = omega
+        z_low, z_high = z_range
+        self.omega_low, self.omega_high = omega
         
         self.h = h
         self.b = b
@@ -122,7 +124,7 @@ class FAI:
         
         self.x = x # shape: (T,N)
         self.demand = demand # shape: (T,1)
-        self.z = np.random.uniform(low=omega_low, high=omega_high, size=(1,N)) # shape: (1,N)
+        self.z = np.random.uniform(low=z_low, high=z_high, size=(1,N)) # shape: (1,N)
         self.epsilon = 1/((h+b)*theta)
         
         
@@ -147,6 +149,7 @@ class FAI:
         '''
         if self.t < self.end:
             if self.t == 0:
+                # self.z = self.projection(self.z, self.omega_low, self.omega_high) # projection
                 self.y_hat = np.dot(self.z,self.x[self.t].reshape(-1,1))
                 self.y = self.y_hat
                 self.t +=1
@@ -159,6 +162,7 @@ class FAI:
                 else:
                     gradient = -self.b
                 self.z -= (self.epsilon/self.t)*gradient*self.x[self.t-1] # shape: (1,N)
+                # self.z = self.projection(self.z, self.omega_low, self.omega_high) # projection
                 self.y_hat = np.dot(self.z, self.x[self.t].T)
                 self.y = np.maximum(self.y_hat, self.u)
                 self.t +=1
@@ -166,4 +170,8 @@ class FAI:
         else:
             raise StopIteration
     
+    def projection(self, x, low, high):
+        x[x<low] = low
+        x[x>high] = high
+        return x
         
