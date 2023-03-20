@@ -19,7 +19,7 @@ initial_pram = {
     'omega_low':1,
     'omega_high':10,
     'loc': 0, # mean of the delta
-    'scale': 40, # std of the delta
+    'scale': 40**(0.5), # std of the delta
     'delta_low': -120, # -3*std
     'delta_high':120 # 3*std
     }
@@ -104,7 +104,7 @@ class DataGen:
         else:
             raise ValueError("data type must be linear, polynomial, trigonometic and exponential!")
         print('\n-----End Simulation-----\n')
-        g_x += scale
+        # g_x += scale
         D = g_x + delta
         optimal_y = g_x + truncnorm.ppf(b/(b+h), a, b, loc, scale)
         
