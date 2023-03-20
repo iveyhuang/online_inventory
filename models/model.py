@@ -79,7 +79,7 @@ class FAI:
                  theta:float,
                  perishable=False,
                  h=1,b=3,
-                 z_range=[0, 1],
+                 z_range=[0, 10],
                  omega=[1,10]):
         '''
         
