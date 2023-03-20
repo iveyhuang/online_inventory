@@ -183,8 +183,8 @@ def manual_simluate(N, data_type, N_all=20, T=720, num_sample=200, cpu=-1):
     '''
     data = DataGen(N=N, T=T, N_all=N_all,num_sample=num_sample)
     data = data.prepare_data(data_type=data_type)
-    theta = 1
-    # theta = data['theta']
+    # theta = 1
+    theta = data['theta']
 
     def func(index):
         x, demand = data['x'][index], data['demand'][index], 
