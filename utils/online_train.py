@@ -154,7 +154,7 @@ def auto_simulate(N, data_type, N_all=20, T=2000, num_sample=200, lr_schedule=No
     return {'linear': result_linear, 'net': result_net}      
         
         
-def manual_simluate(N, data_type, N_all=20, T=720, num_sample=200, cpu=-1):
+def manual_simluate(N, data_type, z_range, omega, N_all=20, T=720, num_sample=200, cpu=-1):
     '''
     
 
@@ -188,7 +188,7 @@ def manual_simluate(N, data_type, N_all=20, T=720, num_sample=200, cpu=-1):
 
     def func(index):
         x, demand = data['x'][index], data['demand'][index], 
-        y = np.array([y for y in FAI(x, demand, theta)])
+        y = np.array([y for y in FAI(x, demand, theta, z_range, omega)])
         regret = cost(y, demand).numpy() # calculate the regret
         regret_mean = np.cumsum(regret)/(np.arange(regret.shape[0]) + 1) # calculate the mean regret before t
         return regret_mean
@@ -196,7 +196,8 @@ def manual_simluate(N, data_type, N_all=20, T=720, num_sample=200, cpu=-1):
     result = Parallel(n_jobs=-1)(delayed(func)(index) for index in tqdm(range(200)))
     return np.array(result)
         
-        
+
+
         
         
         

@@ -77,10 +77,10 @@ class FAI:
                  x:np.array, 
                  demand:np.array,
                  theta:float,
+                 z_range,
+                 omega,
                  perishable=False,
-                 h=1,b=3,
-                 z_range=[0, 10],
-                 omega=[1,10]):
+                 h=1,b=3):
         '''
         
 
@@ -149,7 +149,7 @@ class FAI:
         '''
         if self.t < self.end:
             if self.t == 0:
-                # self.z = self.projection(self.z, self.omega_low, self.omega_high) # projection
+                self.z = self.projection(self.z, self.omega_low, self.omega_high) # projection
                 self.y_hat = np.dot(self.z,self.x[self.t].reshape(-1,1))
                 self.y = self.y_hat
                 self.t +=1
@@ -162,7 +162,7 @@ class FAI:
                 else:
                     gradient = -self.b
                 self.z -= (self.epsilon/self.t)*gradient*self.x[self.t-1] # shape: (1,N)
-                # self.z = self.projection(self.z, self.omega_low, self.omega_high) # projection
+                self.z = self.projection(self.z, self.omega_low, self.omega_high) # projection
                 self.y_hat = np.dot(self.z, self.x[self.t].T)
                 self.y = np.maximum(self.y_hat, self.u)
                 self.t +=1
