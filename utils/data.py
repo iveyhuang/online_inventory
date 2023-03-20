@@ -20,8 +20,8 @@ initial_pram = {
     'omega_high':10,
     'loc': 0, # mean of the delta
     'scale': 40**(0.5), # std of the delta
-    'delta_low': -120, # -3*std
-    'delta_high':120 # 3*std
+    'delta_low': -3*(40**(0.5)), # -3*std
+    'delta_high': 3*(40**(0.5)) # 3*std
     }
 
 
